@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | User Portal</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <div class="container">
+    <h2>Login</h2>
+
+    <!-- Flash messages (from Flask backend) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="flash {{ category }}">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- Login form -->
+    <form id="loginForm" method="POST" action="{{ url_for('login') }}">
+      <input type="email" id="loginEmail" name="email" placeholder="Email" required>
+      <div class="error-text" aria-live="polite"></div>
+
+      <input type="password" id="loginPassword" name="password" placeholder="Password" required>
+      <div class="error-text" aria-live="polite"></div>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="switch-link">
+      <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
