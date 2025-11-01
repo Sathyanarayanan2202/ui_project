@@ -1,1 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Applications</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
+</head>
+<body>
 
+    <h2>Search Applications</h2>
+
+    <select id="userType" onchange="loadUsers()">
+        <option value="" disabled selected>Select User Type</option>
+        <option value="Student">Student</option>
+        <option value="Teacher">Teacher</option>
+    </select>
+
+    <div id="userList" class="user-list" style="display:none;"></div>
+
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+</body>
+</html>
