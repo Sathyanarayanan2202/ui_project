@@ -2,20 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Search Applications</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search User</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
 </head>
 <body>
+    <div class="container">
+        <h2>🔍 Search User Application</h2>
 
-    <h2>Search Applications</h2>
+        <!-- User Type Selector -->
+        <label for="usertype">Select User Type:</label>
+        <select id="usertype" name="usertype">
+            <option value="">-- Select --</option>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+        </select>
 
-    <select id="userType" onchange="loadUsers()">
-        <option value="" disabled selected>Select User Type</option>
-        <option value="Student">Student</option>
-        <option value="Teacher">Teacher</option>
-    </select>
+        <!-- User List -->
+        <div id="userList" class="user-list">
+            <p>Select a user type to view the list.</p>
+        </div>
 
-    <div id="userList" class="user-list" style="display:none;"></div>
+        <!-- Application Form Display -->
+        <div id="userDetails" class="user-details hidden">
+            <h3>Application Form</h3>
+            <div class="form-section">
+                <label>Reg. No:</label>
+                <input type="text" id="regno" readonly>
+
+                <label>User Type:</label>
+                <input type="text" id="type" readonly>
+
+                <label>Name:</label>
+                <input type="text" id="name" readonly>
+
+                <label>Email:</label>
+                <input type="text" id="email" readonly>
+
+                <label>Phone:</label>
+                <input type="text" id="phone" readonly>
+
+                <label>Address:</label>
+                <textarea id="address" readonly></textarea>
+
+                <label>Date of Birth:</label>
+                <input type="text" id="dob" readonly>
+            </div>
+        </div>
+    </div>
 
     <script src="{{ url_for('static', filename='js/search.js') }}"></script>
 </body>
