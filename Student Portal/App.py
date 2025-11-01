@@ -1,103 +1,69 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-import mysql.connector
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask import Flask, render_template, request, jsonify, url_for
+import pandas as pd
+import os
 
 app = Flask(__name__)
-app.secret_key = 'mysecretkey'
+FILE_PATH = 'data.xlsx'
 
-# ------------------ MySQL Connection Setup ------------------
-def get_db_connection():
-    return mysql.connector.connect(
-        host="localhost",        
-        user="root",             
-        password="@Sathya@2202",
-        database="logindb"       
-    )
+# Create Excel file if it doesn't exist
+if not os.path.exists(FILE_PATH):
+    df = pd.DataFrame(columns=['RegNo', 'UserType', 'Name', 'Email', 'Phone', 'Address', 'DOB'])
+    df.to_excel(FILE_PATH, index=False)
 
-# ------------------ Home Route ------------------
+# Function to auto-generate registration numbers
+def generate_regno():
+    df = pd.read_excel(FILE_PATH)
+    if df.empty:
+        return "R001"
+    last_reg = df['RegNo'].iloc[-1]
+    num = int(last_reg[1:]) + 1
+    return f"R{num:03d}"
+
 @app.route('/')
 def home():
-    return redirect(url_for('login'))
+    return render_template('register.html')
 
-# ------------------ Register Route ------------------
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username']
+        usertype = request.form['usertype']
+        name = request.form['name']
         email = request.form['email']
-        password = request.form['password']
-        confirm_password = request.form['confirmPassword']
+        phone = request.form['phone']
+        address = request.form['address']
+        dob = request.form['dob']
 
-        if not username or not email or not password:
-            flash('All fields are required!', 'error')
-            return redirect(url_for('register'))
+        regno = generate_regno()
 
-        if password != confirm_password:
-            flash('Passwords do not match!', 'error')
-            return redirect(url_for('register'))
+        # Add data to Excel
+        new_entry = pd.DataFrame([[regno, usertype, name, email, phone, address, dob]],
+                                 columns=['RegNo', 'UserType', 'Name', 'Email', 'Phone', 'Address', 'DOB'])
+        df = pd.read_excel(FILE_PATH)
+        df = pd.concat([df, new_entry], ignore_index=True)
+        df.to_excel(FILE_PATH, index=False)
 
-        hashed_password = generate_password_hash(password)
-
-        conn = get_db_connection()
-        cur = conn.cursor()
-
-        # Create table if it doesn't exist
-        cur.execute('''
-            CREATE TABLE IF NOT EXISTS users (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                username VARCHAR(100) NOT NULL,
-                email VARCHAR(100) UNIQUE NOT NULL,
-                password VARCHAR(255) NOT NULL
-            )
-        ''')
-
-        # Check if email already exists
-        cur.execute('SELECT * FROM users WHERE email = %s', (email,))
-        existing_user = cur.fetchone()
-
-        if existing_user:
-            flash('Email already registered. Please login.', 'error')
-            conn.close()
-            return redirect(url_for('login'))
-
-        # Insert new user
-        cur.execute('INSERT INTO users (username, email, password) VALUES (%s, %s, %s)',
-                    (username, email, hashed_password))
-        conn.commit()
-        conn.close()
-
-        flash('Registration successful! Please login.', 'success')
-        return redirect(url_for('login'))
+        return render_template('success.html', regno=regno, name=name, usertype=usertype)
 
     return render_template('register.html')
 
-# ------------------ Login Route ------------------
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+@app.route('/search')
+def search():
+    return render_template('search.html')
 
-        conn = get_db_connection()
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE email = %s', (email,))
-        user = cur.fetchone()
-        conn.close()
+@app.route('/get_users/<usertype>')
+def get_users(usertype):
+    df = pd.read_excel(FILE_PATH)
+    filtered = df[df['UserType'].str.lower() == usertype.lower()]
+    users = filtered[['Name', 'RegNo']].to_dict(orient='records')
+    return jsonify(users)
 
-        if user and check_password_hash(user[3], password):
-            flash(f'Welcome, {user[1]}!', 'success')
-            return redirect(url_for('dashboard'))
-        else:
-            flash('Invalid email or password.', 'error')
-            return redirect(url_for('login'))
+@app.route('/get_user_details/<regno>')
+def get_user_details(regno):
+    df = pd.read_excel(FILE_PATH)
+    user = df[df['RegNo'] == regno]
+    if user.empty:
+        return jsonify({})
+    return jsonify(user.iloc[0].to_dict())
 
-    return render_template('login.html')
-
-# ------------------ Dashboard Route ------------------
-@app.route('/dashboard')
-def dashboard():
-    return "<h2>Welcome to your dashboard!</h2><p>Login successful.</p>"
-
-# ------------------ Run App ------------------
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0',port=5000,debug=True)
