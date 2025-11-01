@@ -1,21 +1,44 @@
-from flask import Flask, render_template, request, jsonify, url_for
-import pandas as pd
+from flask import Flask, render_template, request, jsonify
 import os
 
 app = Flask(__name__)
-FILE_PATH = 'data.xlsx'
+FILE_PATH = 'data.txt'
 
-# Create Excel file if it doesn't exist
+# Create text file if it doesn't exist
 if not os.path.exists(FILE_PATH):
-    df = pd.DataFrame(columns=['RegNo', 'UserType', 'Name', 'Email', 'Phone', 'Address', 'DOB'])
-    df.to_excel(FILE_PATH, index=False)
+    with open(FILE_PATH, 'w') as f:
+        f.write("RegNo,UserType,Name,Email,Phone,Address,DOB\n")
+
+# Function to read data from text file into a list of dicts
+def read_data():
+    with open(FILE_PATH, 'r') as f:
+        lines = f.readlines()[1:]  # skip header
+    data = []
+    for line in lines:
+        parts = line.strip().split(',')
+        if len(parts) == 7:
+            data.append({
+                'RegNo': parts[0],
+                'UserType': parts[1],
+                'Name': parts[2],
+                'Email': parts[3],
+                'Phone': parts[4],
+                'Address': parts[5],
+                'DOB': parts[6]
+            })
+    return data
+
+# Function to write a new record to the text file
+def write_data(entry):
+    with open(FILE_PATH, 'a') as f:
+        f.write(','.join(entry) + '\n')
 
 # Function to auto-generate registration numbers
 def generate_regno():
-    df = pd.read_excel(FILE_PATH)
-    if df.empty:
+    data = read_data()
+    if not data:
         return "R001"
-    last_reg = df['RegNo'].iloc[-1]
+    last_reg = data[-1]['RegNo']
     num = int(last_reg[1:]) + 1
     return f"R{num:03d}"
 
@@ -35,12 +58,8 @@ def register():
 
         regno = generate_regno()
 
-        # Add data to Excel
-        new_entry = pd.DataFrame([[regno, usertype, name, email, phone, address, dob]],
-                                 columns=['RegNo', 'UserType', 'Name', 'Email', 'Phone', 'Address', 'DOB'])
-        df = pd.read_excel(FILE_PATH)
-        df = pd.concat([df, new_entry], ignore_index=True)
-        df.to_excel(FILE_PATH, index=False)
+        # Save data into text file
+        write_data([regno, usertype, name, email, phone, address, dob])
 
         return render_template('success.html', regno=regno, name=name, usertype=usertype)
 
@@ -52,18 +71,18 @@ def search():
 
 @app.route('/get_users/<usertype>')
 def get_users(usertype):
-    df = pd.read_excel(FILE_PATH)
-    filtered = df[df['UserType'].str.lower() == usertype.lower()]
-    users = filtered[['Name', 'RegNo']].to_dict(orient='records')
+    data = read_data()
+    filtered = [u for u in data if u['UserType'].lower() == usertype.lower()]
+    users = [{'Name': u['Name'], 'RegNo': u['RegNo']} for u in filtered]
     return jsonify(users)
 
 @app.route('/get_user_details/<regno>')
 def get_user_details(regno):
-    df = pd.read_excel(FILE_PATH)
-    user = df[df['RegNo'] == regno]
-    if user.empty:
-        return jsonify({})
-    return jsonify(user.iloc[0].to_dict())
+    data = read_data()
+    for user in data:
+        if user['RegNo'] == regno:
+            return jsonify(user)
+    return jsonify({})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5000,debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
