@@ -2,17 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Registration Successful</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Success</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/success.css') }}">
 </head>
 <body>
-    <div class="box">
-        <h2>Registration Successful 🎉</h2>
-        <p><strong>{{ name }}</strong> has been registered as a {{ usertype }}.</p>
+    <div class="container">
+        <h2>✅ Registration Successful!</h2>
+        <p><strong>{{ name }}</strong> ({{ usertype }}) has been registered.</p>
         <p>Your Registration Number: <strong>{{ regno }}</strong></p>
-        <br>
-        <a href="/register">Register Another</a> |
-        <a href="/search">Go to Search Page</a>
+        <a href="{{ url_for('search') }}">Go to Search Page</a>
     </div>
 </body>
 </html>
