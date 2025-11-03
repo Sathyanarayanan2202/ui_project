@@ -1,39 +1,72 @@
+/* register.css — registration form design */
+
 body {
-    font-family: "Poppins", sans-serif;
-    background: linear-gradient(135deg, #74ABE2, #5563DE);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #4a90e2, #50c9c3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
 }
-.form-container {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    width: 350px;
+
+.container {
+  background: #fff;
+  border-radius: 15px;
+  padding: 40px 50px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  width: 400px;
 }
+
 h2 {
-    text-align: center;
-    color: #5563DE;
-    margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 25px;
+  color: #333;
+  font-weight: 600;
 }
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+
+form label {
+  font-weight: 500;
+  color: #444;
 }
+
+form input, 
+form select {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0 18px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+form input:focus, 
+form select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
 button {
-    width: 100%;
-    padding: 10px;
-    background: #5563DE;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
 }
+
 button:hover {
-    background: #3349C1;
+  background-color: #357abd;
+}
+
+footer {
+  text-align: center;
+  margin-top: 15px;
+  color: #777;
+  font-size: 13px;
 }
