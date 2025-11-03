@@ -3,66 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Users</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-    <script>
-        async function fetchUsers(usertype) {
-            document.getElementById("userList").innerHTML = "<p>Loading...</p>";
-            
-            const response = await fetch(`/get_users/${usertype}`);
-            const users = await response.json();
-
-            if (users.length === 0) {
-                document.getElementById("userList").innerHTML = "<p>No users found.</p>";
-                return;
-            }
-
-            let html = `<h4 class='mt-3'>${usertype.charAt(0).toUpperCase() + usertype.slice(1)} List</h4>`;
-            html += "<ul class='list-group'>";
-            users.forEach(u => {
-                html += `<li class='list-group-item d-flex justify-content-between align-items-center'>
-                            ${u.Name} (${u.RegNo})
-                            <button class='btn btn-sm btn-info' onclick="fetchDetails('${u.RegNo}')">View</button>
-                         </li>`;
-            });
-            html += "</ul>";
-            document.getElementById("userList").innerHTML = html;
-        }
-
-        async function fetchDetails(regno) {
-            const response = await fetch(`/get_user_details/${regno}`);
-            const user = await response.json();
-
-            if (Object.keys(user).length === 0) {
-                document.getElementById("details").innerHTML = "<p>No details found.</p>";
-                return;
-            }
-
-            let html = `<h5 class='mt-3'>User Details</h5>
-                        <table class='table table-bordered mt-2'>
-                            <tr><th>RegNo</th><td>${user.RegNo}</td></tr>
-                            <tr><th>User Type</th><td>${user.UserType}</td></tr>
-                            <tr><th>Name</th><td>${user.Name}</td></tr>
-                            <tr><th>Email</th><td>${user.Email}</td></tr>
-                            <tr><th>Phone</th><td>${user.Phone}</td></tr>
-                            <tr><th>Address</th><td>${user.Address}</td></tr>
-                            <tr><th>DOB</th><td>${user.DOB}</td></tr>
-                        </table>`;
-            document.getElementById("details").innerHTML = html;
-        }
-    </script>
+    <title>Search User</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Search Registered Users</h2>
+<body>
+    <div class="container">
+        <h2>🔍 Search User Application</h2>
 
-        <div class="text-center">
-            <button class="btn btn-primary me-3" onclick="fetchUsers('teacher')">Show Teachers</button>
-            <button class="btn btn-success" onclick="fetchUsers('student')">Show Students</button>
+        <label for="usertype">Select User Type:</label>
+        <select id="usertype" name="usertype">
+            <option value="">-- Select --</option>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+        </select>
+
+        <div id="userList" class="user-list">
+            <p>Select a user type to view the list.</p>
         </div>
 
-        <div id="userList" class="mt-4"></div>
-        <div id="details" class="mt-4"></div>
+        <div id="userDetails" class="user-details hidden">
+            <h3>Application Form</h3>
+            <div class="form-section">
+                <label>Reg. No:</label>
+                <input type="text" id="regno" readonly>
+
+                <label>User Type:</label>
+                <input type="text" id="type" readonly>
+
+                <label>Name:</label>
+                <input type="text" id="name" readonly>
+
+                <label>Email:</label>
+                <input type="text" id="email" readonly>
+
+                <label>Phone:</label>
+                <input type="text" id="phone" readonly>
+
+                <label>Address:</label>
+                <textarea id="address" readonly></textarea>
+
+                <label>Date of Birth:</label>
+                <input type="text" id="dob" readonly>
+            </div>
+        </div>
     </div>
+    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
 </body>
-</html>
+</html>        
