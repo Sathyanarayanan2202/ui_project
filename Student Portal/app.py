@@ -5,14 +5,14 @@ import os
 app = Flask(__name__)
 FILE_PATH = 'data.xlsx'
 
-# Create Excel file automatically if not exists
+# ✅ Create Excel file if it doesn't exist
 if not os.path.exists(FILE_PATH):
     df = pd.DataFrame(columns=['RegNo', 'UserType', 'Name', 'Email', 'Phone', 'Address', 'DOB'])
-    df.to_excel(FILE_PATH, index=False, engine='openpyxl')
+    df.to_excel(FILE_PATH, index=False, engine='openpyxl')  # ✅ Force .xlsx format
 
-# Function to generate automatic RegNo
+# ✅ Function to auto-generate registration numbers
 def generate_regno():
-    df = pd.read_excel(FILE_PATH, engine='openpyxl')
+    df = pd.read_excel(FILE_PATH, engine='openpyxl')  # ✅ Read .xlsx with correct engine
     if df.empty:
         return "R001"
     last_reg = df['RegNo'].iloc[-1]
@@ -35,12 +35,13 @@ def register():
 
         regno = generate_regno()
 
+        # ✅ Add data to Excel
         new_entry = pd.DataFrame([[regno, usertype, name, email, phone, address, dob]],
                                  columns=['RegNo', 'UserType', 'Name', 'Email', 'Phone', 'Address', 'DOB'])
 
-        df = pd.read_excel(FILE_PATH, engine='openpyxl')
+        df = pd.read_excel(FILE_PATH, engine='openpyxl')  # ✅ Read .xlsx with correct engine
         df = pd.concat([df, new_entry], ignore_index=True)
-        df.to_excel(FILE_PATH, index=False, engine='openpyxl')
+        df.to_excel(FILE_PATH, index=False, engine='openpyxl')  # ✅ Save as .xlsx
 
         return render_template('success.html', regno=regno, name=name, usertype=usertype)
 
@@ -52,14 +53,14 @@ def search():
 
 @app.route('/get_users/<usertype>')
 def get_users(usertype):
-    df = pd.read_excel(FILE_PATH, engine='openpyxl')
+    df = pd.read_excel(FILE_PATH, engine='openpyxl')  # ✅ Read .xlsx with correct engine
     filtered = df[df['UserType'].str.lower() == usertype.lower()]
     users = filtered[['Name', 'RegNo']].to_dict(orient='records')
     return jsonify(users)
 
 @app.route('/get_user_details/<regno>')
 def get_user_details(regno):
-    df = pd.read_excel(FILE_PATH, engine='openpyxl')
+    df = pd.read_excel(FILE_PATH, engine='openpyxl')  # ✅ Read .xlsx with correct engine
     user = df[df['RegNo'] == regno]
     if user.empty:
         return jsonify({})
