@@ -1,54 +1,99 @@
-/* success.css — registration success page styling */
-
 body {
-  font-family: "Poppins", sans-serif;
-  background: linear-gradient(135deg, #43cea2, #185a9d);
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   margin: 0;
 }
 
 .container {
-  background: #fff;
-  padding: 40px 50px;
-  border-radius: 20px;
+  background-color: #fff;
+  padding: 35px 45px;
+  border-radius: 15px;
+  width: 500px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   text-align: center;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  width: 380px;
 }
 
-h1 {
-  color: #185a9d;
-  font-weight: 700;
-  margin-bottom: 20px;
+h2 {
+  font-size: 22px;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
-p {
-  color: #444;
-  margin: 5px 0;
+select {
+  padding: 8px 12px;
   font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  margin: 10px 0;
 }
 
-.regno {
-  font-size: 18px;
-  color: #43cea2;
-  font-weight: 600;
-  margin-top: 15px;
-}
-
-a {
-  display: inline-block;
-  margin-top: 25px;
-  text-decoration: none;
-  background-color: #185a9d;
-  color: #fff;
-  padding: 10px 25px;
+.user-item {
+  background: #f3f4f6;
+  margin: 6px 0;
+  padding: 10px;
   border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid #ddd;
   transition: background 0.3s ease;
 }
+.user-item:hover {
+  background: #e0f2fe;
+}
 
-a:hover {
-  background-color: #10497b;
+/* Application Form */
+#userDetails {
+  margin-top: 20px;
+  padding: 15px;
+  border: 2px solid #000;
+  border-radius: 10px;
+  text-align: left;
+  background-color: #f9fafb;
+  transition: opacity 0.3s ease;
+}
+
+.application-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 8px 10px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  background: #fff;
+  font-size: 14px;
+}
+
+input[readonly],
+textarea[readonly] {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.hidden {
+  display: none;
+  opacity: 0;
+}
+.visible {
+  display: block;
+  opacity: 1;
 }
