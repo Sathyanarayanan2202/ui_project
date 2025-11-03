@@ -1,58 +1,67 @@
 document.addEventListener("DOMContentLoaded", () => {
   // Selecting elements
-  let userTypeSelect = document.getElementById("usertype");
-  let userList = document.getElementById("user-list");
-  let detailsContainer = document.getElementById("details");
+  let userTypeSelect = document.getElementById('usertype');
+  let userList = document.getElementById('userList');
+  let userDetails = document.getElementById('userDetails');
 
-  // When user type (Student/Teacher) is changed
-  userTypeSelect.addEventListener("change", () => {
-    let userType = userTypeSelect.value;
-    if (!userType) return;
+  userTypeSelect.addEventListener('change', async function () {
+    let userType = this.value;
+    userList.innerHTML = "";
+    userDetails.classList.remove('visible');
+    userDetails.classList.add('hidden');
 
-    // Fetch list of users from Flask
-    fetch(`/get_users/${userType}`)
-      .then(response => response.json())
-      .then(users => {
-        // Clear old list and details
-        userList.innerHTML = "";
-        detailsContainer.innerHTML = "";
+    if (!userType) {
+      userList.innerHTML = "<p>Please select a user type.</p>";
+      return;
+    }
 
-        // Create clickable list items for each user
-        users.forEach(user => {
-          let li = document.createElement("li");
-          li.textContent = `${user.Name} (${user.RegNo})`;
-          li.classList.add("user-item");
+    try {
+      let response = await fetch(`/get_users/${userType}`);
+      let users = await response.json();
 
-          // On click → show user details
-          li.addEventListener("click", () => showDetails(user.RegNo));
-          userList.appendChild(li);
-        });
+      if (users.length === 0) {
+        userList.innerHTML = "<p>No users found.</p>";
+        return;
+      }
+
+      users.forEach(u => {
+        let div = document.createElement('div');
+        div.classList.add('user-item');
+        div.textContent = `${u.RegNo} — ${u.Name}`;
+        div.addEventListener('click', () => loadUserDetails(u.RegNo));
+        userList.appendChild(div);
       });
+
+    } catch (err) {
+      console.error(err);
+      userList.innerHTML = "<p>Error fetching users.</p>";
+    }
   });
 
-  // Function to fetch and display user details (like an application form)
-  function showDetails(regno) {
-    fetch(`/get_user_details/${regno}`)
-      .then(response => response.json())
-      .then(data => {
-        if (!data.RegNo) {
-          detailsContainer.innerHTML = "<p>No data found.</p>";
-          return;
-        }
+  async function loadUserDetails(regno) {
+    try {
+      let response = await fetch(`/get_user_details/${regno}`);
+      let data = await response.json();
 
-        // Display non-editable data in application form style
-        detailsContainer.innerHTML = `
-          <div class="application-form">
-            <h3>Application Form</h3>
-            <p><strong>Reg No:</strong> ${data.RegNo}</p>
-            <p><strong>User Type:</strong> ${data.UserType}</p>
-            <p><strong>Name:</strong> ${data.Name}</p>
-            <p><strong>Email:</strong> ${data.Email}</p>
-            <p><strong>Phone:</strong> ${data.Phone}</p>
-            <p><strong>Address:</strong> ${data.Address}</p>
-            <p><strong>Date of Birth:</strong> ${data.DOB}</p>
-          </div>
-        `;
-      });
+      if (!data.RegNo) {
+        alert("User not found.");
+        return;
+      }
+
+      document.getElementById('regno').value = data.RegNo;
+      document.getElementById('type').value = data.UserType;
+      document.getElementById('name').value = data.Name;
+      document.getElementById('email').value = data.Email;
+      document.getElementById('phone').value = data.Phone;
+      document.getElementById('address').value = data.Address;
+      document.getElementById('dob').value = data.DOB;
+
+      userDetails.classList.remove('hidden');
+      setTimeout(() => userDetails.classList.add('visible'), 50);
+
+    } catch (err) {
+      console.error(err);
+      alert("Failed to load user details.");
+    }
   }
 });
