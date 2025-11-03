@@ -2,31 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register User</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
 </head>
 <body>
-    <div class="form-container">
-        <h2>User Registration</h2>
-        <form method="POST" action="/register">
+    <div class="container">
+        <h2>📝 Registration Form</h2>
+        <form action="/register" method="POST">
             <label>User Type:</label>
             <select name="usertype" required>
-                <option value="" disabled selected>Select</option>
+                <option value="">-- Select --</option>
                 <option value="Student">Student</option>
                 <option value="Teacher">Teacher</option>
             </select>
 
             <label>Name:</label>
-            <input type="text" name="name" placeholder="Enter Name" required>
+            <input type="text" name="name" required>
 
             <label>Email:</label>
-            <input type="email" name="email" placeholder="Enter Email" required>
+            <input type="email" name="email" required>
 
             <label>Phone:</label>
-            <input type="number" name="phone" placeholder="Enter Phone" required>
+            <input type="text" name="phone" required>
 
             <label>Address:</label>
-            <input type="text" name="address" placeholder="Enter Address" required>
+            <textarea name="address" required></textarea>
 
             <label>Date of Birth:</label>
             <input type="date" name="dob" required>
